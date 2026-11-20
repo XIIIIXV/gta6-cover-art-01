@@ -2,98 +2,119 @@
 
 [![make.fun](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01) [![rank](https://make.fun/badge/gta6-cover-art-01/XIIIIXV/gta6-cover-art-01/rank.svg)](https://make.fun/bounty/gta6-cover-art-01) [![reward](https://make.fun/badge/gta6-cover-art-01/XIIIIXV/gta6-cover-art-01/reward.svg)](https://make.fun/bounty/gta6-cover-art-01)
 
-A cover maker that runs entirely in your browser: pick photos, arrange them
-into a GTA-style multi-panel poster, add a big two-word title, and export
-the result as a PNG. No account, no upload, no network — the app, its
-fonts and its sample photos all live in this repo. Built for the make.fun
-gta6-cover-art-01 bounty ($250).
+A GTA-style cover art maker that runs entirely in your browser. Pick a
+photo, a layout and a colour grade, write the words, drag a panel's photo
+to crop it — then save the cover as a PNG you can post.
 
-## The cover: SUNSET CHASE
+This is my entry for the make.fun bounty **gta6-cover-art-01** ("Make GTA 6
+Cover Art"). It is a static web app: no server, no upload, no account.
+Open it, make a cover, export it.
 
-The default cover is **SUNSET CHASE** — a Vice-style poster built from
-the two GTA VI fanmade cover references the user supplied for this entry,
-with every Rockstar mark stripped out and the text replaced:
-
-- **Hero on the left.** One tall photo anchors the cover — the wide
-  reference's hero shot, warm sunset grade.
-- **Mosaic on the right.** Seven smaller panels in a tight grid: coast,
-  red car, masked figure, airboat, bike, helicopter, sunset.
-- **Title block, centre-bottom.** `SUNSET CHASE` in heavy grotesque
-  lettering with a sunset gradient fill, thick outline and drop shadow,
-  over the pink script subtitle `Golden Hour Getaway`.
-- **Tagline strip along the bottom.** `COASTLINE COVER STUDIO` — the
-  studio label that replaces the reference's own branding.
-
-## What you can change
-
-- **Photos.** Drop in your own images, or use the twelve bundled samples
-  (vi-hero, vi-cap, vi-coast, vi-redcar, vi-masked, vi-airboat, vi-bike,
-  vi-heli, vi-sunset, vi-muscle, vi-floral, vi-swamp). Drag a panel to
-  reposition its crop, scroll to zoom it.
-- **Layouts.** Nine poster grids besides Vice: Collage, Hero Left, Neon
-  Grid, Halftone Hero, Cast, Sun Run, One Photo, Numbered — each one
-  re-arranges the same photos into a different multi-panel composition.
-- **Grades.** Seven colour treatments: Sunset, Neon, Heatwave, Golden,
-  Dusk, Halftone (posterize + dot screen), Vice.
-- **Lettering.** Edit the two-word title, the script subtitle and every
-  panel caption (place + time + flavour, or a character role).
-- **Badges.** Optional star rating, EST. 2026 seal, WANTED, VOL. 06,
-  COAST EDITION, NEW SUMMER 2026 starburst, ORIGINAL seal.
-
-## Run it
+## Try it
 
 ```sh
-node serve.ts --port 8080
-# open http://localhost:8080/
+# Serve the app locally (needs Node 22):
+node serve.ts
+# then open http://localhost:8080
 ```
 
-`serve.ts` is a small static server that serves `app/` on port 8080 by
-default. Desktop Chrome is the target. To check the entrypoint the way
-the grader does: `mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts` —
-`main.ts` copies `app/` and `screenshots/` to the output directory and
-writes `dossier.json` there.
+Or open `app/index.html` directly in desktop Chrome — it works with no
+network at all.
 
-## Export
+## What it makes
 
-One click exports the current cover as a PNG in one of three sizes:
+The cover is a multi-panel GTA-style poster:
 
-- 1080 × 1080 (square)
-- 1080 × 1350 (portrait)
-- 1920 × 1080 (landscape)
+- **A big hero photo on the left**, and a mosaic of smaller panels on the
+  right — the "Vice" layout, modelled on the GTA VI cover.
+- **A huge two-word title** ("SUNSET CHASE") in a sunset gradient with a
+  dark outline, stacked over the centre-bottom of the poster.
+- **A pink script subtitle** ("Golden Hour Getaway") tilted across the
+  title, and a **tagline strip** along the very bottom
+  ("ONE COAST · NO RULES · COMING SOON").
+- **Badges**: a NEW SUMMER 2026 starburst, a VOL. 06 pill, and an
+  ORIGINAL seal — each toggleable in the editor.
+- **Panel captions**: every panel wears a place label ("OCEAN DRIVE ·
+  6:42 PM") that you can edit, restyle, or hide.
 
-The export is the app's own drawing, straight from the canvas — never
-edited or composited afterwards.
+## The editor
+
+The left column walks through six steps:
+
+1. **Photos** — upload your own, or use the twelve bundled samples.
+2. **Layout** — nine layouts, from the seven-panel Vice to a ten-panel
+   collage, a cast grid, and a one-photo set.
+3. **Colour grade** — seven grades (Sunset, Neon, Heatwave, Golden, Dusk,
+   Halftone, Vice) that re-filter every photo and re-tint the title.
+4. **Words** — the title, the script subtitle, the tagline, and the
+   badges to show.
+5. **Selected panel** — the caption, its style, the zoom, and the crop.
+   Click a panel on the cover to select it; drag to move its photo,
+   scroll to zoom.
+6. **Export** — save the cover as a PNG in 1080 × 1080, 1080 × 1350, or
+   1920 × 1080.
+
+## How the cover is built
+
+The code is in `app/src/`:
+
+- `cover.js` — the painter. A `CoverRenderer` class takes a cover state
+  (layout, grade, title, subtitle, tagline, badges, panels) and the loaded
+  images, and paints the whole poster on a 2D canvas: panels, labels,
+  title, subtitle, badges, masthead, tagline, frame. The preview and the
+  PNG export both go through it, so they always agree.
+- `main.js` — the editor. A `CoverEditor` class owns the page: the state,
+  the photo strip, the layout and grade buttons, the panel form, the
+  drag-to-crop canvas, and the export buttons.
+- `shots.js` — the fixed scenes for screenshots. A `ShotDirector` reads
+  the `?shot=` query (cover, square, portrait, editor) and paints that
+  scene, then sets `window.__shotReady`.
+
+`main.ts` is the entrypoint: it copies `app/` and `screenshots/` into the
+output directory and writes `dossier.json` with the vendored make.fun
+library. `serve.ts` is a tiny static server for local testing.
+`tools/shots.mjs` captures the four screenshots in `shots.json` with
+headless Chromium.
 
 ## Screenshots
 
-Four images in `screenshots/`, taken by the app itself:
-
-- `1-cover.jpg` — the SUNSET CHASE cover, 1280 × 720.
-- `2-editor.jpg` — the editor in the browser with a photo loaded.
-- `3-cover-square.jpg` — a second cover, NEON COAST, 1080 × 1080.
-- `4-cover-portrait.jpg` — a third cover, SUN HEIST, 960 × 1200.
+| File | What it shows |
+| --- | --- |
+| `screenshots/1-cover.jpg` | SUNSET CHASE, 1280 × 720 |
+| `screenshots/2-editor.jpg` | The editor with a photo loaded, 1280 × 720 |
+| `screenshots/3-cover-square.jpg` | NEON COAST, 1080 × 1080 |
+| `screenshots/4-cover-portrait.jpg` | SUN HEIST, 960 × 1200 |
 
 ## Files
 
-- `app/index.html` — editor page
-- `app/style.css` — editor styles, bundled fonts
-- `app/src/cover.js` — cover renderer: layouts, grades, title, badges
-- `app/src/main.js` — editor: photos, pickers, crop, export
-- `app/src/shots.js` — fixed scenes behind `?shot=`
-- `app/samples/` — the twelve sample photos
-- `app/fonts/` — Archivo Black, Pacifico, Bebas Neue (SIL OFL) + licence
-- `screenshots/` — the four screenshots above
-- `main.ts` — entrypoint: copies app/ + screenshots/, writes dossier.json
-- `serve.ts` — local static server
-- `shots.json` — screenshot scenes
-- `vendor/makefun-app.ts` — kit dossier library, unchanged
+```
+app/
+  index.html            the page
+  style.css             page styles
+  fonts/                Archivo Black, Bebas Neue, Pacifico (SIL OFL)
+  samples/              the twelve bundled photos (vi-*.jpg)
+  src/
+    cover.js            the cover painter
+    main.js             the editor
+    shots.js            the screenshot scenes
+main.ts                 the entrypoint (Node 22)
+serve.ts                local static server
+shots.json              the four screenshot definitions
+tools/shots.mjs         screenshot capture with headless Chromium
+vendor/makefun-app.ts   the kit's vendored library (unchanged)
+screenshots/            the four screenshots above
+```
 
-## Provenance
+## Where the photos come from
 
-All art is original to this entry. The sample photos are crops of the
-user's own GTA VI fanmade cover references, supplied and authorised by
-the user for this entry; the Rockstar logo, R* mark, FANMADE badge and
-reference seal are excluded from every crop, and the app's own title,
-subtitle and studio label replace the reference text. The fonts are SIL
-Open Font License files bundled under `app/fonts/`. No Rockstar logo,
-artwork or font is used anywhere.
+The twelve sample photos are panels cropped from the user's own GTA VI
+fanmade covers, which he supplied and explicitly cleared for this entry.
+Every crop was checked to leave out Rockstar branding: no GTA logo, no R*
+badge, no FANMADE stamp, no reference seal. The cover's own title,
+subtitle and studio line replace the reference wording. The fonts are SIL
+Open Font License files shipped under `app/fonts/`. No Rockstar logo,
+artwork or font is in this repository.
+
+## Licence
+
+MIT — see `LICENSE`.

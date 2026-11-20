@@ -1,55 +1,80 @@
-/* Coastline Cover Studio — page styles, second draft.
+/* ==========================================================================
+   Coastline Cover Studio — page styles, third draft.
+
    Dark violet chrome around a bright cover canvas; the controls live in a
    narrow left column, the preview fills the rest. Colours come from the
    cover itself (sunset orange, neon pink, gold) so the page and the poster
-   feel like one thing. */
+   feel like one thing.
+
+   This is a from-scratch restyle of the same page. Every selector and every
+   value is the same as the approved build — the page looks identical — but
+   the rules are grouped by component with section headers, and the
+   declarations inside each rule are ordered by what they do (box, then
+   text, then colour) instead of the previous draft's order.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Fonts — the three faces the cover uses, all SIL OFL files under fonts/.
+   -------------------------------------------------------------------------- */
 
 @font-face {
   font-family: "Archivo Black";
+  src: url("./fonts/ArchivoBlack-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url("./fonts/ArchivoBlack-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Pacifico";
+  src: url("./fonts/Pacifico-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url("./fonts/Pacifico-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Bebas Neue";
+  src: url("./fonts/BebasNeue-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url("./fonts/BebasNeue-Regular.ttf") format("truetype");
 }
+
+/* --------------------------------------------------------------------------
+   Base — border-box everywhere, dark violet page, system-ui text.
+   -------------------------------------------------------------------------- */
 
 * { box-sizing: border-box; }
 
-html, body {
-  margin: 0;
+html,
+body {
   min-height: 100%;
-  color: #f5eef7;
+  margin: 0;
   background: #12081c;
+  color: #f5eef7;
   font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* The shell: controls left, preview right, full viewport height. */
+/* --------------------------------------------------------------------------
+   Shell — controls left, preview right, full viewport height.
+   -------------------------------------------------------------------------- */
+
 .app {
   display: flex;
+  height: 100vh;
   align-items: stretch;
   gap: 0;
-  height: 100vh;
   overflow: hidden;
 }
 
+/* --------------------------------------------------------------------------
+   Preview — the cover canvas, centred, with a soft glow behind it.
+   -------------------------------------------------------------------------- */
+
 .preview {
-  flex: 1 1 auto;
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
   justify-content: center;
   padding: 28px;
@@ -67,9 +92,14 @@ html, body {
   touch-action: none;
 }
 
-/* Screenshot mode: the cover alone, filling the viewport. */
+/* Screenshot mode: the cover alone, filling the viewport, no chrome. */
 body.shot-cover .controls { display: none; }
-body.shot-cover .preview { padding: 0; background: #14091f; }
+
+body.shot-cover .preview {
+  padding: 0;
+  background: #14091f;
+}
+
 body.shot-cover .preview canvas {
   width: 100vw;
   height: 100vh;
@@ -79,13 +109,17 @@ body.shot-cover .preview canvas {
   cursor: default;
 }
 
+/* --------------------------------------------------------------------------
+   Controls — the narrow left column.
+   -------------------------------------------------------------------------- */
+
 .controls {
   width: 340px;
   flex: 0 0 340px;
   padding: 22px 20px 32px;
   overflow-y: auto;
-  background: linear-gradient(180deg, #1d0b2b 0%, #160820 100%);
   border-right: 1px solid #3a1c4d;
+  background: linear-gradient(180deg, #1d0b2b 0%, #160820 100%);
 }
 
 .controls header h1 {
@@ -100,9 +134,20 @@ body.shot-cover .preview canvas {
   color: transparent;
 }
 
-.controls header p { margin: 0; color: #c9a8d8; }
+.controls header p {
+  margin: 0;
+  color: #c9a8d8;
+}
 
-.controls footer { margin-top: 22px; font-size: 12px; color: #8a6a9a; }
+.controls footer {
+  margin-top: 22px;
+  color: #8a6a9a;
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Control groups — one section per step, separated by a hairline.
+   -------------------------------------------------------------------------- */
 
 .group {
   margin-top: 22px;
@@ -144,11 +189,21 @@ body.shot-cover .preview canvas {
   outline-offset: 1px;
 }
 
-.group input[type="range"] { width: 100%; accent-color: #ff2e88; }
+.group input[type="range"] {
+  width: 100%;
+  accent-color: #ff2e88;
+}
 
-.hint { margin: 4px 0 0; color: #a98bb8; font-size: 12.5px; }
+.hint {
+  margin: 4px 0 0;
+  color: #a98bb8;
+  font-size: 12.5px;
+}
 
-/* Photo upload + strip. */
+/* --------------------------------------------------------------------------
+   Photo upload + strip.
+   -------------------------------------------------------------------------- */
+
 .upload {
   display: block;
   padding: 10px 12px;
@@ -186,7 +241,10 @@ body.shot-cover .preview canvas {
   object-fit: cover;
 }
 
-/* Layout picker: two columns of miniature grids. */
+/* --------------------------------------------------------------------------
+   Layout picker — two columns of miniature grids.
+   -------------------------------------------------------------------------- */
+
 .layout-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -210,7 +268,10 @@ body.shot-cover .preview canvas {
   cursor: pointer;
 }
 
-.layout-btn.active { border-color: #ff2e88; background: #3a1448; }
+.layout-btn.active {
+  border-color: #ff2e88;
+  background: #3a1448;
+}
 
 .layout-mini {
   position: relative;
@@ -228,7 +289,10 @@ body.shot-cover .preview canvas {
   background: linear-gradient(135deg, #ff7a1a, #ff2e88);
 }
 
-/* Grade picker: swatch dot + name. */
+/* --------------------------------------------------------------------------
+   Grade picker — swatch dot + name.
+   -------------------------------------------------------------------------- */
+
 .grade-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -250,7 +314,10 @@ body.shot-cover .preview canvas {
   cursor: pointer;
 }
 
-.grade-btn.active { border-color: #ff2e88; background: #3a1448; }
+.grade-btn.active {
+  border-color: #ff2e88;
+  background: #3a1448;
+}
 
 .grade-swatch {
   width: 22px;
@@ -260,7 +327,10 @@ body.shot-cover .preview canvas {
   border-radius: 50%;
 }
 
-/* Badge checkboxes, two per row. */
+/* --------------------------------------------------------------------------
+   Badge checkboxes — two per row, inside a fieldset.
+   -------------------------------------------------------------------------- */
+
 .badges {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -287,10 +357,21 @@ body.shot-cover .preview canvas {
   font-weight: 500;
 }
 
-/* Selected panel form. */
-.panel-label { margin: 0 0 8px; color: #ff8fc0; font-weight: 700; }
+/* --------------------------------------------------------------------------
+   Selected panel form + export buttons + status line.
+   -------------------------------------------------------------------------- */
 
-.row { display: flex; flex-wrap: wrap; gap: 8px; }
+.panel-label {
+  margin: 0 0 8px;
+  color: #ff8fc0;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
 .row button {
   flex: 1 1 auto;
@@ -306,14 +387,41 @@ body.shot-cover .preview canvas {
 
 .row button:hover { border-color: #ff2e88; }
 
-.row button.active { background: #ff2e88; border-color: #ff2e88; }
+.row button.active {
+  border-color: #ff2e88;
+  background: #ff2e88;
+}
 
-.row button[data-export] { background: #ff2e88; border-color: #ff2e88; }
+.row button[data-export] {
+  border-color: #ff2e88;
+  background: #ff2e88;
+}
 
-#status { min-height: 1.2em; margin: 10px 0 0; color: #8fd8a8; font-size: 13px; }
+#status {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: #8fd8a8;
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens — stack the controls above the preview.
+   -------------------------------------------------------------------------- */
 
 @media (max-width: 900px) {
-  .app { flex-direction: column; height: auto; overflow: visible; }
-  .controls { width: auto; flex: none; overflow-y: visible; border-right: 0; border-bottom: 1px solid #3a1c4d; }
+  .app {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .controls {
+    width: auto;
+    flex: none;
+    overflow-y: visible;
+    border-right: 0;
+    border-bottom: 1px solid #3a1c4d;
+  }
+
   .preview { padding: 16px; }
 }

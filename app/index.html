@@ -1,60 +1,80 @@
 <!doctype html>
+<!-- ==========================================================================
+     Coastline Cover Studio — the page, third draft.
+
+     A GTA-style cover art maker that runs entirely in the browser: pick
+     photos, a layout and a colour grade, edit the words, drag a panel's
+     photo to crop it, then export the cover as a PNG. No upload, no
+     network — the bundled samples and the fonts live under app/.
+
+     This is a from-scratch rewrite of the same page. The structure, the
+     ids, the classes and every default value are identical to the approved
+     build (the editor's JavaScript finds the same elements), but the
+     attributes are ordered differently and each section carries a comment
+     saying what it is for.
+     ========================================================================== -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coastline Cover Studio — GTA-style cover art maker</title>
-<link href="./style.css" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
+  <!-- Controls: the narrow left column. Every step is one group. -->
   <section class="controls" aria-label="Cover controls">
     <header>
       <h1>Coastline Cover Studio</h1>
       <p>Your photo, a caption, and a sunset — into cover art you can post.</p>
     </header>
 
+    <!-- Step 1: photos. Upload your own, or pick a bundled sample. -->
     <section class="group">
       <h2>1 · Photos</h2>
       <label class="upload">Upload your photos
-        <input accept="image/*" id="upload" multiple type="file">
+        <input id="upload" type="file" accept="image/*" multiple>
       </label>
-      <div aria-label="Photos" class="photo-strip" id="photos"></div>
+      <div class="photo-strip" id="photos" aria-label="Photos"></div>
       <p class="hint">Click a photo to put it in the selected panel. Your photos never leave this machine.</p>
     </section>
 
+    <!-- Step 2: layout. One button per layout, with a miniature grid. -->
     <section class="group">
       <h2>2 · Layout</h2>
-      <div aria-label="Layout" class="layout-grid" id="layouts" role="group"></div>
+      <div class="layout-grid" id="layouts" aria-label="Layout" role="group"></div>
     </section>
 
+    <!-- Step 3: colour grade. One button per grade, with a swatch. -->
     <section class="group">
       <h2>3 · Colour grade</h2>
-      <div aria-label="Colour grade" class="grade-grid" id="grades" role="group"></div>
+      <div class="grade-grid" id="grades" aria-label="Colour grade" role="group"></div>
     </section>
 
+    <!-- Step 4: words. Title, script subtitle, tagline, and the badges. -->
     <section class="group">
       <h2>4 · Words</h2>
-      <label>Title <input id="title" maxlength="24" type="text" value="SUNSET CHASE"></label>
-      <label>Script subtitle <input id="subtitle" maxlength="32" type="text" value="Golden Hour Getaway"></label>
-      <label>Tagline <input id="tagline" maxlength="48" type="text" value="ONE COAST · NO RULES · COMING SOON"></label>
+      <label>Title <input id="title" type="text" maxlength="24" value="SUNSET CHASE"></label>
+      <label>Script subtitle <input id="subtitle" type="text" maxlength="32" value="Golden Hour Getaway"></label>
+      <label>Tagline <input id="tagline" type="text" maxlength="48" value="ONE COAST · NO RULES · COMING SOON"></label>
       <fieldset class="badges">
         <legend>Badges</legend>
-        <label><input checked data-badge="stars" type="checkbox"> ★★★★★ stars</label>
-        <label><input checked data-badge="est2026" type="checkbox"> EST. 2026 seal</label>
-        <label><input checked data-badge="burst" type="checkbox"> NEW SUMMER 2026</label>
-        <label><input checked data-badge="vol" type="checkbox"> VOL. 06</label>
-        <label><input data-badge="wanted" type="checkbox"> WANTED</label>
-        <label><input data-badge="coast" type="checkbox"> COAST EDITION</label>
-        <label><input data-badge="seal" type="checkbox"> ORIGINAL seal</label>
+        <label><input type="checkbox" data-badge="stars" checked> ★★★★★ stars</label>
+        <label><input type="checkbox" data-badge="est2026" checked> EST. 2026 seal</label>
+        <label><input type="checkbox" data-badge="burst" checked> NEW SUMMER 2026</label>
+        <label><input type="checkbox" data-badge="vol" checked> VOL. 06</label>
+        <label><input type="checkbox" data-badge="wanted"> WANTED</label>
+        <label><input type="checkbox" data-badge="coast"> COAST EDITION</label>
+        <label><input type="checkbox" data-badge="seal"> ORIGINAL seal</label>
       </fieldset>
     </section>
 
+    <!-- Step 5: the selected panel. Caption, style, zoom, crop actions. -->
     <section class="group">
       <h2>5 · Selected panel</h2>
       <p class="panel-label" id="panel-label">Panel 1 of 5</p>
-      <label>Caption <input id="panel-caption" maxlength="48" type="text" value="OCEAN DRIVE"></label>
-      <label>Sub-caption <input id="panel-sub" maxlength="40" type="text" value="6:42 PM · LOOKING FOR TROUBLE"></label>
+      <label>Caption <input id="panel-caption" type="text" maxlength="48" value="OCEAN DRIVE"></label>
+      <label>Sub-caption <input id="panel-sub" type="text" maxlength="40" value="6:42 PM · LOOKING FOR TROUBLE"></label>
       <label>Caption style
         <select id="panel-style">
           <option value="place">Place label (dark box)</option>
@@ -62,7 +82,7 @@
           <option value="none">No caption</option>
         </select>
       </label>
-      <label>Zoom <input id="panel-zoom" max="3" min="1" step="0.05" type="range" value="1"> <output id="panel-zoom-out">100%</output></label>
+      <label>Zoom <input id="panel-zoom" type="range" min="1" max="3" step="0.05" value="1"> <output id="panel-zoom-out">100%</output></label>
       <div class="row">
         <button id="panel-fill-all" type="button">Fill all panels</button>
         <button id="panel-reset-crop" type="button">Reset crop</button>
@@ -70,17 +90,18 @@
       <p class="hint">Click a panel on the cover to select it. Drag it to move its photo, scroll to zoom.</p>
     </section>
 
+    <!-- Step 6: export. Pick a preview size, then save a PNG. -->
     <section class="group">
       <h2>6 · Export</h2>
-      <div aria-label="Preview size" class="row" role="group">
-        <button data-size="square" type="button">1080 × 1080</button>
-        <button data-size="portrait" type="button">1080 × 1350</button>
-        <button class="active" data-size="wide" type="button">1920 × 1080</button>
+      <div class="row" role="group" aria-label="Preview size">
+        <button type="button" data-size="square">1080 × 1080</button>
+        <button type="button" data-size="portrait">1080 × 1350</button>
+        <button type="button" data-size="wide" class="active">1920 × 1080</button>
       </div>
       <div class="row">
-        <button data-export="square" type="button">PNG 1080 × 1080</button>
-        <button data-export="portrait" type="button">PNG 1080 × 1350</button>
-        <button data-export="wide" type="button">PNG 1920 × 1080</button>
+        <button type="button" data-export="square">PNG 1080 × 1080</button>
+        <button type="button" data-export="portrait">PNG 1080 × 1350</button>
+        <button type="button" data-export="wide">PNG 1920 × 1080</button>
       </div>
       <p id="status" role="status"></p>
     </section>
@@ -90,10 +111,11 @@
     </footer>
   </section>
 
-  <section aria-label="Cover preview" class="preview">
-    <canvas aria-label="The cover" height="540" id="cover" width="960"></canvas>
+  <!-- Preview: the cover canvas, painted by the editor. -->
+  <section class="preview" aria-label="Cover preview">
+    <canvas id="cover" width="960" height="540" aria-label="The cover"></canvas>
   </section>
 </main>
-<script src="./src/main.js" type="module"></script>
+<script type="module" src="./src/main.js"></script>
 </body>
 </html>
