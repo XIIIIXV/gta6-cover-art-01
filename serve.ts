@@ -9,13 +9,9 @@ import { createServer } from 'node:http';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = resolve(join(fileURLToPath(new URL('.', import.meta.url)), 'app'));
-const args = process.argv.slice(2);
-const portFlag = args.indexOf('--port');
-const wanted = portFlag === -1 ? 8080 : Number(args[portFlag + 1]);
-const port = Number.isInteger(wanted) && wanted > 0 && wanted < 65536 ? wanted : 8080;
+const APP_ROOT = resolve(join(fileURLToPath(new URL('.', import.meta.url)), 'app'));
 
-const TYPES = {
+const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
@@ -33,21 +29,34 @@ const TYPES = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-createServer((request, response) => {
-  const url = new URL(request.url ?? '/', 'http://localhost');
+/** The port from --port, or 8080 when the flag is missing or bad. */
+function pickPort() {
+  const argv = process.argv.slice(2);
+  const at = argv.indexOf('--port');
+  const wanted = at === -1 ? 8080 : Number(argv[at + 1]);
+  return Number.isInteger(wanted) && wanted > 0 && wanted < 65536 ? wanted : 8080;
+}
+
+const port = pickPort();
+
+/** Resolves a request path to a file under APP_ROOT, or a refusal status. */
+function resolveRequest(urlPath) {
   let pathname;
   try {
-    pathname = decodeURIComponent(url.pathname);
+    pathname = decodeURIComponent(urlPath);
   } catch {
-    response.writeHead(400).end('bad request');
-    return;
+    return { status: 400, message: 'bad request' };
   }
   if (pathname.endsWith('/')) pathname += 'index.html';
-  const file = resolve(join(root, normalize(pathname)));
-  if (file !== root && !file.startsWith(root + sep)) {
-    response.writeHead(403).end('forbidden');
-    return;
+  const file = resolve(join(APP_ROOT, normalize(pathname)));
+  if (file !== APP_ROOT && !file.startsWith(APP_ROOT + sep)) {
+    return { status: 403, message: 'forbidden' };
   }
+  return { file };
+}
+
+/** Streams a file to the response, or 404s when it is not a plain file. */
+function serveFile(response, file) {
   let size;
   try {
     const stats = statSync(file);
@@ -58,11 +67,21 @@ createServer((request, response) => {
     return;
   }
   response.writeHead(200, {
-    'content-type': TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream',
+    'content-type': MIME[extname(file).toLowerCase()] ?? 'application/octet-stream',
     'content-length': size,
     'cache-control': 'no-store',
   });
   createReadStream(file).pipe(response);
+}
+
+createServer((request, response) => {
+  const url = new URL(request.url ?? '/', 'http://localhost');
+  const resolved = resolveRequest(url.pathname);
+  if (resolved.status) {
+    response.writeHead(resolved.status).end(resolved.message);
+    return;
+  }
+  serveFile(response, resolved.file);
 }).listen(port, '127.0.0.1', () => {
   console.log(`app/ is on http://localhost:${port}`);
 });

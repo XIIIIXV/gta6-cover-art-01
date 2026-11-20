@@ -10,32 +10,33 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const repo = join(here, '..');
-const shots = JSON.parse(readFileSync(join(repo, 'shots.json'), 'utf8'));
-const CHROME = '/home/hatch/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell';
-const PORT = 8080;
+const toolDir = fileURLToPath(new URL('.', import.meta.url));
+const repoRoot = join(toolDir, '..');
+const shotList = JSON.parse(readFileSync(join(repoRoot, 'shots.json'), 'utf8'));
+const CHROME_BIN = '/home/hatch/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell';
+const SERVER_PORT = 8080;
 
-mkdirSync(join(repo, 'screenshots'), { recursive: true });
+mkdirSync(join(repoRoot, 'screenshots'), { recursive: true });
 
-for (const shot of shots) {
-  const tmp = `/tmp/shot-${shot.name}.png`;
-  const url = `http://localhost:${PORT}/${shot.query}`;
-  execFileSync(CHROME, [
+for (const shot of shotList) {
+  const tmpPng = `/tmp/shot-${shot.name}.png`;
+  const page = `http://localhost:${SERVER_PORT}/${shot.query}`;
+  execFileSync(CHROME_BIN, [
     '--headless', '--disable-gpu', '--no-sandbox',
-    `--screenshot=${tmp}`,
+    `--screenshot=${tmpPng}`,
     `--window-size=${shot.w},${shot.h}`,
     '--virtual-time-budget=15000',
     '--hide-scrollbars',
-    url,
+    page,
   ], { stdio: 'ignore' });
   // PNG -> JPEG, quality 82, keeping the shot's own size.
-  const out = join(repo, 'screenshots', shot.name);
-  execFileSync('python3', ['-c', `
+  const dest = join(repoRoot, 'screenshots', shot.name);
+  const convert = `
 from PIL import Image
-im = Image.open(${JSON.stringify(tmp)}).convert('RGB')
-im.save(${JSON.stringify(out)}, 'JPEG', quality=82)
+im = Image.open(${JSON.stringify(tmpPng)}).convert('RGB')
+im.save(${JSON.stringify(dest)}, 'JPEG', quality=82)
 print(${JSON.stringify(shot.name)}, im.size)
-`], { stdio: 'inherit' });
+`;
+  execFileSync('python3', ['-c', convert], { stdio: 'inherit' });
 }
 console.log('shots done');
