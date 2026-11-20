@@ -1,121 +1,73 @@
 /* ==========================================================================
-   Coastline Cover Studio — page styles, third draft.
+   Coastline Cover Studio — page styles, fourth draft.
 
-   Dark violet chrome around a bright cover canvas; the controls live in a
-   narrow left column, the preview fills the rest. Colours come from the
-   cover itself (sunset orange, neon pink, gold) so the page and the poster
-   feel like one thing.
+   The page is dark violet chrome around a bright cover canvas, and the
+   controls live in a narrow left column while the preview fills the rest.
+   The colours come from the cover itself (sunset orange, neon pink,
+   gold), so the page and the poster feel like one thing.
 
-   This is a from-scratch restyle of the same page. Every selector and every
-   value is the same as the approved build — the page looks identical — but
-   the rules are grouped by component with section headers, and the
-   declarations inside each rule are ordered by what they do (box, then
-   text, then colour) instead of the previous draft's order.
+   This draft groups the rules by what the user touches — first the column
+   with every control, then the preview canvas, then the small screens —
+   and orders the declarations inside each rule by size first, then
+   position, then colour. The selectors and every value are the same as
+   the approved build, so the page looks identical; only the stylesheet's
+   own shape changed.
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   Fonts — the three faces the cover uses, all SIL OFL files under fonts/.
-   -------------------------------------------------------------------------- */
+/* Fonts — the three faces the cover uses, all SIL OFL files under fonts. */
 
 @font-face {
   font-family: "Archivo Black";
-  src: url("./fonts/ArchivoBlack-Regular.ttf") format("truetype");
-  font-weight: 400;
   font-style: normal;
+  font-weight: 400;
   font-display: swap;
+  src: url("./fonts/ArchivoBlack-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Pacifico";
-  src: url("./fonts/Pacifico-Regular.ttf") format("truetype");
-  font-weight: 400;
   font-style: normal;
+  font-weight: 400;
   font-display: swap;
+  src: url("./fonts/Pacifico-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Bebas Neue";
-  src: url("./fonts/BebasNeue-Regular.ttf") format("truetype");
-  font-weight: 400;
   font-style: normal;
+  font-weight: 400;
   font-display: swap;
+  src: url("./fonts/BebasNeue-Regular.ttf") format("truetype");
 }
 
-/* --------------------------------------------------------------------------
-   Base — border-box everywhere, dark violet page, system-ui text.
-   -------------------------------------------------------------------------- */
+/* Base — border-box everywhere, dark violet page, system-ui text. */
 
 * { box-sizing: border-box; }
 
 html,
 body {
-  min-height: 100%;
   margin: 0;
+  min-height: 100%;
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
   background: #12081c;
   color: #f5eef7;
-  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* --------------------------------------------------------------------------
-   Shell — controls left, preview right, full viewport height.
-   -------------------------------------------------------------------------- */
+/* Shell — controls left, preview right, full viewport height. */
 
 .app {
   display: flex;
-  height: 100vh;
   align-items: stretch;
+  height: 100vh;
   gap: 0;
   overflow: hidden;
 }
 
-/* --------------------------------------------------------------------------
-   Preview — the cover canvas, centred, with a soft glow behind it.
-   -------------------------------------------------------------------------- */
-
-.preview {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  padding: 28px;
-  background:
-    radial-gradient(900px 500px at 20% 0%, rgba(255, 46, 136, 0.16), transparent 60%),
-    radial-gradient(700px 500px at 90% 100%, rgba(255, 122, 26, 0.14), transparent 60%),
-    #12081c;
-}
-
-.preview canvas {
-  max-width: 100%;
-  max-height: calc(100vh - 56px);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
-  cursor: crosshair;
-  touch-action: none;
-}
-
-/* Screenshot mode: the cover alone, filling the viewport, no chrome. */
-body.shot-cover .controls { display: none; }
-
-body.shot-cover .preview {
-  padding: 0;
-  background: #14091f;
-}
-
-body.shot-cover .preview canvas {
-  width: 100vw;
-  height: 100vh;
-  max-width: none;
-  max-height: none;
-  box-shadow: none;
-  cursor: default;
-}
-
-/* --------------------------------------------------------------------------
-   Controls — the narrow left column.
-   -------------------------------------------------------------------------- */
+/* Controls — the narrow left column. */
 
 .controls {
-  width: 340px;
   flex: 0 0 340px;
+  width: 340px;
   padding: 22px 20px 32px;
   overflow-y: auto;
   border-right: 1px solid #3a1c4d;
@@ -141,13 +93,11 @@ body.shot-cover .preview canvas {
 
 .controls footer {
   margin-top: 22px;
-  color: #8a6a9a;
   font-size: 12px;
+  color: #8a6a9a;
 }
 
-/* --------------------------------------------------------------------------
-   Control groups — one section per step, separated by a hairline.
-   -------------------------------------------------------------------------- */
+/* Control groups — one section per step, separated by a hairline. */
 
 .group {
   margin-top: 22px;
@@ -157,10 +107,10 @@ body.shot-cover .preview canvas {
 
 .group h2 {
   margin: 0 0 10px;
-  color: #ff8fc0;
   font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: #ff8fc0;
 }
 
 .group label {
@@ -168,9 +118,9 @@ body.shot-cover .preview canvas {
   flex-direction: column;
   gap: 5px;
   margin: 0 0 10px;
-  color: #e8d5ee;
   font-size: 13px;
   font-weight: 600;
+  color: #e8d5ee;
 }
 
 .group input[type="text"],
@@ -178,9 +128,9 @@ body.shot-cover .preview canvas {
   padding: 8px 10px;
   border: 1px solid #5b2a72;
   border-radius: 8px;
+  font: inherit;
   background: #241130;
   color: #fff;
-  font: inherit;
 }
 
 .group input[type="text"]:focus,
@@ -196,13 +146,11 @@ body.shot-cover .preview canvas {
 
 .hint {
   margin: 4px 0 0;
-  color: #a98bb8;
   font-size: 12.5px;
+  color: #a98bb8;
 }
 
-/* --------------------------------------------------------------------------
-   Photo upload + strip.
-   -------------------------------------------------------------------------- */
+/* Photo upload + strip. */
 
 .upload {
   display: block;
@@ -241,9 +189,7 @@ body.shot-cover .preview canvas {
   object-fit: cover;
 }
 
-/* --------------------------------------------------------------------------
-   Layout picker — two columns of miniature grids.
-   -------------------------------------------------------------------------- */
+/* Layout picker — two columns of miniature grids. */
 
 .layout-grid {
   display: grid;
@@ -259,12 +205,12 @@ body.shot-cover .preview canvas {
   padding: 8px;
   border: 1px solid #5b2a72;
   border-radius: 8px;
-  background: #241130;
-  color: #f5eef7;
   font: inherit;
   font-size: 12.5px;
   font-weight: 600;
   text-align: left;
+  background: #241130;
+  color: #f5eef7;
   cursor: pointer;
 }
 
@@ -289,9 +235,7 @@ body.shot-cover .preview canvas {
   background: linear-gradient(135deg, #ff7a1a, #ff2e88);
 }
 
-/* --------------------------------------------------------------------------
-   Grade picker — swatch dot + name.
-   -------------------------------------------------------------------------- */
+/* Grade picker — swatch dot + name. */
 
 .grade-grid {
   display: grid;
@@ -306,11 +250,11 @@ body.shot-cover .preview canvas {
   padding: 8px 10px;
   border: 1px solid #5b2a72;
   border-radius: 8px;
-  background: #241130;
-  color: #f5eef7;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
+  background: #241130;
+  color: #f5eef7;
   cursor: pointer;
 }
 
@@ -320,16 +264,14 @@ body.shot-cover .preview canvas {
 }
 
 .grade-swatch {
+  flex: 0 0 22px;
   width: 22px;
   height: 22px;
-  flex: 0 0 22px;
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
 }
 
-/* --------------------------------------------------------------------------
-   Badge checkboxes — two per row, inside a fieldset.
-   -------------------------------------------------------------------------- */
+/* Badge checkboxes — two per row, inside a fieldset. */
 
 .badges {
   display: grid;
@@ -343,9 +285,9 @@ body.shot-cover .preview canvas {
 
 .badges legend {
   padding: 0 6px;
-  color: #c9a8d8;
   font-size: 12.5px;
   font-weight: 700;
+  color: #c9a8d8;
 }
 
 .badges label {
@@ -357,14 +299,12 @@ body.shot-cover .preview canvas {
   font-weight: 500;
 }
 
-/* --------------------------------------------------------------------------
-   Selected panel form + export buttons + status line.
-   -------------------------------------------------------------------------- */
+/* Selected panel form + export buttons + status line. */
 
 .panel-label {
   margin: 0 0 8px;
-  color: #ff8fc0;
   font-weight: 700;
+  color: #ff8fc0;
 }
 
 .row {
@@ -378,10 +318,10 @@ body.shot-cover .preview canvas {
   padding: 9px 10px;
   border: 1px solid #5b2a72;
   border-radius: 8px;
-  background: #2c1540;
-  color: #fff;
   font: inherit;
   font-weight: 700;
+  background: #2c1540;
+  color: #fff;
   cursor: pointer;
 }
 
@@ -400,13 +340,50 @@ body.shot-cover .preview canvas {
 #status {
   min-height: 1.2em;
   margin: 10px 0 0;
-  color: #8fd8a8;
   font-size: 13px;
+  color: #8fd8a8;
 }
 
-/* --------------------------------------------------------------------------
-   Narrow screens — stack the controls above the preview.
-   -------------------------------------------------------------------------- */
+/* Preview — the cover canvas, centred, with a soft glow behind it. */
+
+.preview {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background:
+    radial-gradient(900px 500px at 20% 0%, rgba(255, 46, 136, 0.16), transparent 60%),
+    radial-gradient(700px 500px at 90% 100%, rgba(255, 122, 26, 0.14), transparent 60%),
+    #12081c;
+}
+
+.preview canvas {
+  max-width: 100%;
+  max-height: calc(100vh - 56px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* Screenshot mode: the cover alone, filling the viewport, no chrome. */
+body.shot-cover .controls { display: none; }
+
+body.shot-cover .preview {
+  padding: 0;
+  background: #14091f;
+}
+
+body.shot-cover .preview canvas {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* Narrow screens — stack the controls above the preview. */
 
 @media (max-width: 900px) {
   .app {
@@ -416,8 +393,8 @@ body.shot-cover .preview canvas {
   }
 
   .controls {
-    width: auto;
     flex: none;
+    width: auto;
     overflow-y: visible;
     border-right: 0;
     border-bottom: 1px solid #3a1c4d;

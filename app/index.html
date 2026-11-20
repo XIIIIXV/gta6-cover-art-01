@@ -1,17 +1,16 @@
 <!doctype html>
 <!-- ==========================================================================
-     Coastline Cover Studio — the page, third draft.
+     Coastline Cover Studio — the page, fourth draft.
 
      A GTA-style cover art maker that runs entirely in the browser: pick
      photos, a layout and a colour grade, edit the words, drag a panel's
      photo to crop it, then export the cover as a PNG. No upload, no
      network — the bundled samples and the fonts live under app/.
 
-     This is a from-scratch rewrite of the same page. The structure, the
-     ids, the classes and every default value are identical to the approved
-     build (the editor's JavaScript finds the same elements), but the
-     attributes are ordered differently and each section carries a comment
-     saying what it is for.
+     The structure, the ids, the classes and every default value are
+     identical to the approved build (the editor's JavaScript finds the
+     same elements), but the comments say what each step does in fresh
+     words and the attributes sit in a different order.
      ========================================================================== -->
 <html lang="en">
 <head>
@@ -22,14 +21,14 @@
 </head>
 <body>
 <main class="app">
-  <!-- Controls: the narrow left column. Every step is one group. -->
+  <!-- The narrow left column: every step of making a cover, top to bottom. -->
   <section class="controls" aria-label="Cover controls">
     <header>
       <h1>Coastline Cover Studio</h1>
       <p>Your photo, a caption, and a sunset — into cover art you can post.</p>
     </header>
 
-    <!-- Step 1: photos. Upload your own, or pick a bundled sample. -->
+    <!-- Step 1 — photos. Upload your own, or pick a bundled sample. -->
     <section class="group">
       <h2>1 · Photos</h2>
       <label class="upload">Upload your photos
@@ -39,19 +38,19 @@
       <p class="hint">Click a photo to put it in the selected panel. Your photos never leave this machine.</p>
     </section>
 
-    <!-- Step 2: layout. One button per layout, with a miniature grid. -->
+    <!-- Step 2 — layout. One button per layout, with a miniature grid. -->
     <section class="group">
       <h2>2 · Layout</h2>
       <div class="layout-grid" id="layouts" aria-label="Layout" role="group"></div>
     </section>
 
-    <!-- Step 3: colour grade. One button per grade, with a swatch. -->
+    <!-- Step 3 — colour grade. One button per grade, with a swatch. -->
     <section class="group">
       <h2>3 · Colour grade</h2>
       <div class="grade-grid" id="grades" aria-label="Colour grade" role="group"></div>
     </section>
 
-    <!-- Step 4: words. Title, script subtitle, tagline, and the badges. -->
+    <!-- Step 4 — words. Title, script subtitle, tagline, and the badges. -->
     <section class="group">
       <h2>4 · Words</h2>
       <label>Title <input id="title" type="text" maxlength="24" value="SUNSET CHASE"></label>
@@ -69,7 +68,7 @@
       </fieldset>
     </section>
 
-    <!-- Step 5: the selected panel. Caption, style, zoom, crop actions. -->
+    <!-- Step 5 — the selected panel. Caption, style, zoom, crop actions. -->
     <section class="group">
       <h2>5 · Selected panel</h2>
       <p class="panel-label" id="panel-label">Panel 1 of 5</p>
@@ -90,7 +89,7 @@
       <p class="hint">Click a panel on the cover to select it. Drag it to move its photo, scroll to zoom.</p>
     </section>
 
-    <!-- Step 6: export. Pick a preview size, then save a PNG. -->
+    <!-- Step 6 — export. Pick a preview size, then save a PNG. -->
     <section class="group">
       <h2>6 · Export</h2>
       <div class="row" role="group" aria-label="Preview size">
@@ -111,7 +110,7 @@
     </footer>
   </section>
 
-  <!-- Preview: the cover canvas, painted by the editor. -->
+  <!-- The preview: the cover canvas, painted by the editor. -->
   <section class="preview" aria-label="Cover preview">
     <canvas id="cover" width="960" height="540" aria-label="The cover"></canvas>
   </section>

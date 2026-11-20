@@ -1,91 +1,55 @@
-# Coastline Cover Studio
+# Coastline Cover Studio — a GTA-style poster maker
 
 [![make.fun](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01) [![rank](https://make.fun/badge/gta6-cover-art-01/XIIIIXV/gta6-cover-art-01/rank.svg)](https://make.fun/bounty/gta6-cover-art-01) [![reward](https://make.fun/badge/gta6-cover-art-01/XIIIIXV/gta6-cover-art-01/reward.svg)](https://make.fun/bounty/gta6-cover-art-01)
 
-A GTA-style cover art maker that runs entirely in your browser. Pick a
-photo, a layout and a colour grade, write the words, drag a panel's photo
-to crop it — then save the cover as a PNG you can post.
+Make a poster that looks like it belongs on a game box — in the browser,
+with no account, no upload, and no network. This is my entry for the
+make.fun bounty **gta6-cover-art-01** ("Make GTA 6 Cover Art").
 
-This is my entry for the make.fun bounty **gta6-cover-art-01** ("Make GTA 6
-Cover Art"). It is a static web app: no server, no upload, no account.
-Open it, make a cover, export it.
-
-## Try it
+## Run it
 
 ```sh
-# Serve the app locally (needs Node 22):
+# Needs Node 22. Serves the app on http://localhost:8080:
 node serve.ts
-# then open http://localhost:8080
 ```
 
-Or open `app/index.html` directly in desktop Chrome — it works with no
-network at all.
+You can also open `app/index.html` straight from disk in desktop Chrome.
+Everything it needs (photos, fonts, code) is already in the repo, so it
+works fully offline.
 
-## What it makes
+## Making a cover
 
-The cover is a multi-panel GTA-style poster:
+The editor is six steps down the left column, and the poster updates
+live on the right:
 
-- **A big hero photo on the left**, and a mosaic of smaller panels on the
-  right — the "Vice" layout, modelled on the GTA VI cover.
-- **A huge two-word title** ("SUNSET CHASE") in a sunset gradient with a
-  dark outline, stacked over the centre-bottom of the poster.
-- **A pink script subtitle** ("Golden Hour Getaway") tilted across the
-  title, and a **tagline strip** along the very bottom
-  ("ONE COAST · NO RULES · COMING SOON").
-- **Badges**: a NEW SUMMER 2026 starburst, a VOL. 06 pill, and an
-  ORIGINAL seal — each toggleable in the editor.
-- **Panel captions**: every panel wears a place label ("OCEAN DRIVE ·
-  6:42 PM") that you can edit, restyle, or hide.
+1. **Photos** — bring your own pictures, or use the twelve samples that
+   ship with the app.
+2. **Layout** — nine ways to arrange the panels. Vice is the big-hero
+   mosaic modelled on the GTA VI cover; Collage is a ten-panel grid;
+   there is also a cast grid, a neon grid, and a single-photo set.
+3. **Colour grade** — seven looks (Sunset, Neon, Heatwave, Golden,
+   Dusk, Halftone, Vice). Each one re-filters every photo and re-tints
+   the title gradient.
+4. **Words** — the title, the tilted script subtitle, the tagline along
+   the bottom, and which badges to show.
+5. **Selected panel** — change the caption, pick a caption style, zoom
+   and re-crop the photo. Click any panel on the poster to select it,
+   drag it to move the photo, scroll to zoom.
+6. **Export** — save the finished poster as a PNG in 1080 × 1080,
+   1080 × 1350, or 1920 × 1080.
 
-## The editor
+## What the poster looks like
 
-The left column walks through six steps:
+The default cover is **SUNSET CHASE**: a big hero photo on the left, a
+mosaic of smaller scenes on the right, a huge stacked two-word title in
+a sunset gradient with a dark outline, a pink script subtitle
+("Golden Hour Getaway") tilted across it, and a tagline strip along the
+bottom ("ONE COAST · NO RULES · COMING SOON"). Toggleable badges add a
+NEW SUMMER 2026 starburst, a VOL. 06 pill, and an ORIGINAL seal. Every
+panel wears a place caption such as "OCEAN DRIVE · 6:42 PM" — edit,
+restyle, or hide any of them.
 
-1. **Photos** — upload your own, or use the twelve bundled samples.
-2. **Layout** — nine layouts, from the seven-panel Vice to a ten-panel
-   collage, a cast grid, and a one-photo set.
-3. **Colour grade** — seven grades (Sunset, Neon, Heatwave, Golden, Dusk,
-   Halftone, Vice) that re-filter every photo and re-tint the title.
-4. **Words** — the title, the script subtitle, the tagline, and the
-   badges to show.
-5. **Selected panel** — the caption, its style, the zoom, and the crop.
-   Click a panel on the cover to select it; drag to move its photo,
-   scroll to zoom.
-6. **Export** — save the cover as a PNG in 1080 × 1080, 1080 × 1350, or
-   1920 × 1080.
-
-## How the cover is built
-
-The code is in `app/src/`:
-
-- `cover.js` — the painter. A `CoverRenderer` class takes a cover state
-  (layout, grade, title, subtitle, tagline, badges, panels) and the loaded
-  images, and paints the whole poster on a 2D canvas: panels, labels,
-  title, subtitle, badges, masthead, tagline, frame. The preview and the
-  PNG export both go through it, so they always agree.
-- `main.js` — the editor. A `CoverEditor` class owns the page: the state,
-  the photo strip, the layout and grade buttons, the panel form, the
-  drag-to-crop canvas, and the export buttons.
-- `shots.js` — the fixed scenes for screenshots. A `ShotDirector` reads
-  the `?shot=` query (cover, square, portrait, editor) and paints that
-  scene, then sets `window.__shotReady`.
-
-`main.ts` is the entrypoint: it copies `app/` and `screenshots/` into the
-output directory and writes `dossier.json` with the vendored make.fun
-library. `serve.ts` is a tiny static server for local testing.
-`tools/shots.mjs` captures the four screenshots in `shots.json` with
-headless Chromium.
-
-## Screenshots
-
-| File | What it shows |
-| --- | --- |
-| `screenshots/1-cover.jpg` | SUNSET CHASE, 1280 × 720 |
-| `screenshots/2-editor.jpg` | The editor with a photo loaded, 1280 × 720 |
-| `screenshots/3-cover-square.jpg` | NEON COAST, 1080 × 1080 |
-| `screenshots/4-cover-portrait.jpg` | SUN HEIST, 960 × 1200 |
-
-## Files
+## Inside the code
 
 ```
 app/
@@ -102,8 +66,36 @@ serve.ts                local static server
 shots.json              the four screenshot definitions
 tools/shots.mjs         screenshot capture with headless Chromium
 vendor/makefun-app.ts   the kit's vendored library (unchanged)
-screenshots/            the four screenshots above
+screenshots/            the four screenshots below
 ```
+
+The painter (`app/src/cover.js`) is a pipeline, not a class: the cover
+is data (photo list, colour grades, nine layout records with panel
+rectangles, title anchors and badge sets) plus a list of small drawing
+steps that run in a fixed order — base, photos, labels, title band,
+masthead, title, subtitle, badges, tagline, frame. The preview canvas
+and the PNG export run the same steps, so what you see is what you get.
+
+The editor (`app/src/main.js`) builds one state object with a factory
+and wires the page with small functions that close over it. The shot
+scenes (`app/src/shots.js`) read the `?shot=` query (cover, square,
+portrait, editor), paint that scene, and set `window.__shotReady` when
+the paint is done.
+
+`main.ts` hands the entry in: it copies `app/` and `screenshots/` into
+the output directory and writes `dossier.json` with the vendored make.fun
+library. `serve.ts` is the tiny static server for local testing, and
+`tools/shots.mjs` captures the four screenshots in `shots.json` with
+headless Chromium.
+
+## Screenshots
+
+| File | What it shows |
+| --- | --- |
+| `screenshots/1-cover.jpg` | SUNSET CHASE, 1280 × 720 |
+| `screenshots/2-editor.jpg` | The editor with a photo loaded, 1280 × 720 |
+| `screenshots/3-cover-square.jpg` | NEON COAST, 1080 × 1080 |
+| `screenshots/4-cover-portrait.jpg` | SUN HEIST, 960 × 1200 |
 
 ## Where the photos come from
 
